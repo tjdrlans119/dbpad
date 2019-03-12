@@ -82,7 +82,34 @@
 
 <script>
     export default {
-        name: "Connection"
+      name: "Connection",
+      data: function() {
+        return {
+          updateFormData: {
+            hostname: '',
+            port: '',
+            maintenanceDb: '',
+            userName: '',
+            userPassword: '',
+            savePassword: '',
+            serverRole: '',
+            serverService: ''
+          }
+        }
+      },
+      methods: {
+        updateFormValue: function() {
+          this.updateFormData.hostname = this.hostname
+          this.updateFormData.port = this.port
+          this.updateFormData.maintenanceDb = this.maintenanceDb
+          this.updateFormData.userName = this.userName
+          this.updateFormData.userPassword = this.userPassword
+          this.updateFormData.savePassword = this.savePassword
+          this.updateFormData.serviceRole = this.serviceRole
+          this.updateFormData.serverRole = this.serverRole
+          this.$emit('updateForm',this.updateFormData)
+        }
+      }
     }
 </script>
 

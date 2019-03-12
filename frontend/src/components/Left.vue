@@ -1,26 +1,5 @@
 <template>
-  <div>
-    <!--<b-container style="background-color: rgba(0, 0, 0, 0.03)" class="bv-example-row">
-      <b-row>
-        <b-col cols="8">
-          <h5>
-            <b-badge variant="light">
-              Browser
-            </b-badge>
-          </h5>
-        </b-col>
-        <b-col>
-          <b-badge class="p-1 align-bottom" href="#" variant="light" style="font-size: 9px">Add Server</b-badge>
-        </b-col>
-      </b-row>
-    </b-container>
-    <v-jstree :data="data"
-              allow-batch
-              whole-row
-              draggable
-              @item-click="itemClick"
-              ref="tree">
-    </v-jstree>-->
+  <div id="example">
     <div class="w-100 p-2" style="background-color: rgba(0, 0, 0, 0.03)">
       Browser
       <b-badge pill variant="light" @click="showModal">Add Server</b-badge>
@@ -33,14 +12,14 @@
     </v-jstree>
 
     <!--서버 등록 modal-->
-    <b-modal ref="myModalRef" id="modal-center" centered title="Create Server">
+    <b-modal ref="myModalRef" id="modal-center" centered title="Create Server" @ok="addServer">
       <b-card no-body style="font-size: small">
         <b-tabs card >
           <b-tab title="General" active>
-            <General></General>
+            <General v-on:updateForm="setUpdateGeneralData"></General>
           </b-tab>
           <b-tab title="Connection" >
-            <Connection></Connection>
+            <Connection v-on:updateForm="setUpdateConnectionData"></Connection>
           </b-tab>
           <b-tab title="SSL">
             <SSL></SSL>
@@ -59,9 +38,11 @@
   import Connection from './modal/Connection'
   import SSL from './modal/SSL'
   import Advanced from './modal/Advanced'
-
   import VJstree from 'vue-jstree'
+  import axios from 'axios'
+
   export default {
+    el: '#example',
     name: 'app',
     components: {
       Advanced,
@@ -72,11 +53,6 @@
     },
     data() {
       return {
-        itemEvents: {
-          contextmenu: function () {
-            debugger;
-          }
-        },
         data: [{
           "text": "Server",
           "children": [
@@ -107,12 +83,50 @@
               ]
             }
           ]
-        }]
+        }],
+        updateFormData: {
+          name : '',
+          serverGroup: '',
+          comments: '',
+          hostname: '',
+          port: '',
+          maintenanceDb: '',
+          userName: '',
+          userPassword: '',
+          savePassword: '',
+          serverRole: '',
+          serverService: ''
+        }
       }
     },
     methods: {
       showModal () {
         this.$refs.myModalRef.show()
+      },
+      addServer: function () {
+        const vm = this
+        axios.post('http://localhost:3000/api/addServer',{
+          serverName : this.updateFormData.name,
+          serverGroup : this.updateFormData.serverGroup,
+          comments : this.updateFormData.comments
+        }).then(function(response) {
+            vm.dash = response.data;
+          });
+      },
+      setUpdateGeneralData: function (text) {
+        this.updateFormData.comments = text.comments
+        this.updateFormData.name = text.name
+        this.updateFormData.serverGroup = text.serverGroup
+      },
+      setUpdateConnectionData: function(text) {
+        this.updateFormData.hostname = text.hostname
+        this.updateFormData.port = text.port
+        this.updateFormData.maintenanceDb = text.maintenanceDb
+        this.updateFormData.userName = text.userName
+        this.updateFormData.userPassword = text.userPassword
+        this.updateFormData.savePassword = text.savePassword
+        this.updateFormData.serviceRole = text.serviceRole
+        this.updateFormData.serverRole = text.serverRole
       }
     }
   }

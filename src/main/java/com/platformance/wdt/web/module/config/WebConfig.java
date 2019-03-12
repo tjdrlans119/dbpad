@@ -7,10 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 import javax.sql.DataSource;
 
 @Configuration
@@ -24,7 +22,7 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/*")
                         .allowedOrigins("*")
-                        .allowedMethods(HttpMethod.GET.name())
+                        .allowedMethods("*")
                         .allowCredentials(false)
                         .maxAge(3600);
             }
@@ -42,10 +40,10 @@ public class WebConfig {
         return sqlSessionFactoryBean.getObject();
     }
 
-//  => webflux 사용시 작성법
-//
+  //=> webflux 사용시 작성법
+
 //    @Bean
-//    public WebFluxConfigurer webFluxConfigurer() {
+//    public WebMvcConfigurer webFluxConfigurer() {
 //        return new WebFluxConfigurerComposite() {
 //            @Override
 //            public void addCorsMappings(CorsRegistry registry) {
